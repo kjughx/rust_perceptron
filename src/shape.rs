@@ -6,6 +6,7 @@ use crate::{
     WIDTH,
     HEIGHT
 };
+
 pub enum Shape{
     Rectangle {
         x: u32,
@@ -19,6 +20,7 @@ pub enum Shape{
         r:  u32,
     }
 }
+
 impl Shape {
     pub fn new_rectangle(x: u32, y: u32, w: u32, h: u32) -> Shape{
         Shape::Rectangle { x, y, w, h }

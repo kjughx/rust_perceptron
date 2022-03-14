@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -27,7 +26,6 @@ pub struct Layer {
     height: u32,
     data: Vec<f64>,
 }
-type Model = Layer;
 
 impl Layer{
     pub fn new(width: u32, height: u32) -> Layer{

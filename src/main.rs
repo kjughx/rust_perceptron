@@ -1,17 +1,11 @@
-#![allow(unused_variables, dead_code, unused_imports)]
 use perceptron::{
-    shape::Shape,
-    layer::{
-        Layer,
-        Color
-    },
+    layer::{Layer,
+    Color},
     train::TrainingSet,
     TRAINING_CASE_COUNT,
     WIDTH,
     HEIGHT,
 };
-
-use rand::random;
 
 fn main() -> Result<(), std::io::Error>{
     let mut model = Layer::new(WIDTH, HEIGHT);
