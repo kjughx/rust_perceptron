@@ -1,4 +1,1 @@
-# rust_perceptron
-# rust_perceptron
-# rust_perceptron
-# rust_perceptron
+# Rust Implementation of Perceptron
