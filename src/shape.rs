@@ -28,9 +28,14 @@ impl Shape {
     pub fn new_circle(xc: u32, yc: u32, r: u32) -> Shape{
         Shape::Circle{ xc, yc, r }
     }
-    pub fn get_dimensions(&self) -> Vec<u32>{
-        if let Shape::Rectangle{x, y, w, h} = self{
-            Vec::from([x, y, w, h])
+    pub fn get_dimensions(&self) -> Vec<&u32>{
+        match self{
+            Shape::Rectangle{x, y, w, h} => {
+                return Vec::from([x, y, w, h]);
+            },
+            Shape::Circle{xc, yc, r} => {
+                return Vec::from([xc, yc, r]);
+            }
         }
     }
     pub fn random_shape(shape: Option<&str>) -> Option<Shape>{

@@ -9,6 +9,9 @@ use perceptron::{
 
 fn main() -> Result<(), std::io::Error>{
     let training_sets = TrainingSet::generate_training_sets(TRAINING_CASE_COUNT);
+    TrainingSet::write_training_sets("training_sets/training_set".to_string(), &training_sets)?;
+    // let training_sets = TrainingSet::read_training_sets("training_sets".to_string()).unwrap();
+
     let mut model = Model::new();
 
     let train_accuracy = model.train(training_sets);
