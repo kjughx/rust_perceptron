@@ -8,13 +8,9 @@ use crate::{
         clamp,
         in_bounds
     },
-    train::TrainingSet,
-    COLOR_DEPTH,
-    BIAS,
-    WIDTH,
-    HEIGHT,
-    EVALUATE_CASE_COUNT,
+    COLOR_DEPTH, WIDTH, HEIGHT,
 };
+
 pub struct Color{
     pub r: u8,
     pub g: u8,
@@ -22,18 +18,17 @@ pub struct Color{
 }
 
 pub struct Layer {
-    width: u32,
-    height: u32,
+    pub width: u32,
+    pub height: u32,
     data: Vec<f64>,
 }
 
 impl Layer{
-    pub fn new(width: u32, height: u32) -> Layer{
-        let size = height * width;
-        let buffer = vec![0f64; size as usize];
+    pub fn new() -> Layer{
+        let buffer = vec![0f64; (WIDTH*HEIGHT) as usize];
         Layer{
-            height,
-            width,
+            width: WIDTH as u32,
+            height: HEIGHT as u32,
             data: buffer
         }
     }
@@ -48,13 +43,21 @@ impl Layer{
             None
         }
     }
-    fn set_point(&mut self, x: u32, y: u32, value: f64) -> bool {
+    pub fn set_point(&mut self, x: u32, y: u32, value: f64) -> bool {
         match self.get_offset(x, y) {
             Some(offset) => {
                 self.data[offset] = value;
                 true
             },
             None => false
+        }
+    }
+    pub fn get_point(&self, x: u32, y: u32) -> Option<f64>{
+        match self.get_offset(x, y){
+            Some(offset) => {
+                Some(self.data[offset])
+            },
+            None => None
         }
     }
     pub fn fill(&mut self, shape: Shape){
@@ -95,74 +98,6 @@ impl Layer{
 
             },
         }
-    }
-    pub fn correct(&mut self, training_set: &TrainingSet){
-        assert_eq!(self.buffer_size(), training_set.image.buffer_size());
-        match training_set.label {
-            "Rectangle" => {
-                for i in 0..self.buffer_size() as usize{
-                    self.data[i] -= training_set.image.data[i];
-                }
-            },
-            "Circle" => {
-                for i in 0..self.buffer_size() as usize{
-                    self.data[i] += training_set.image.data[i];
-                }
-            },
-            _ => {},
-
-        }
-    }
-    pub fn predict<'a>(&self, inputs: &Layer) -> &'a str{
-        let mut output = 0f64;
-        assert_eq!(self.width, inputs.width);
-        assert_eq!(self.height, inputs.height);
-
-        for i in 0..self.buffer_size() as usize{
-            output += inputs.data[i] * self.data[i];
-        }
-
-        if output < BIAS{
-            return "Rectangle"
-        }
-        else {
-            return "Circle"
-        }
-    }
-    pub fn train(&mut self, training_sets: Vec<TrainingSet>){
-        println!("Training model...");
-        for training_set in training_sets{
-            let prediction = self.predict(&training_set.image);
-            if prediction != training_set.label{
-                self.correct(&training_set);
-            }
-        }
-        println!("Finished training!");
-    }
-    pub fn evaluate(&self) -> f64{
-        let mut accuracy = 0.0;
-        let mut layer = Layer::new(WIDTH, HEIGHT);
-        for _ in 0..EVALUATE_CASE_COUNT{
-            if let Some(shape) = Shape::random_shape(None){
-                match shape{
-                    Shape::Rectangle{x:_,y:_,w:_,h:_} => {
-                        layer.fill(shape);
-                        let prediction = self.predict(&layer);
-                        if prediction == "Rectangle" {
-                            accuracy += 1.0;
-                        }
-                    },
-                    Shape::Circle{xc:_,yc:_,r:_} => {
-                        layer.fill(shape);
-                        let prediction = self.predict(&layer);
-                        if prediction == "Circle" {
-                            accuracy += 1.0;
-                        }
-                    }
-                }
-            }
-        }
-        accuracy / (EVALUATE_CASE_COUNT as f64)
     }
     pub fn write_to_ppm(&self, filename: String, color: Color) -> Result<(), std::io::Error> {
         let path = Path::new(&filename);

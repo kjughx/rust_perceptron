@@ -6,7 +6,7 @@ use crate::{
     WIDTH,
     HEIGHT
 };
-
+#[derive(Clone, Copy)]
 pub enum Shape{
     Rectangle {
         x: u32,
@@ -27,6 +27,11 @@ impl Shape {
     }
     pub fn new_circle(xc: u32, yc: u32, r: u32) -> Shape{
         Shape::Circle{ xc, yc, r }
+    }
+    pub fn get_dimensions(&self) -> Vec<u32>{
+        if let Shape::Rectangle{x, y, w, h} = self{
+            Vec::from([x, y, w, h])
+        }
     }
     pub fn random_shape(shape: Option<&str>) -> Option<Shape>{
         match shape {
