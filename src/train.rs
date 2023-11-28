@@ -87,10 +87,14 @@ impl TrainingSet<'_>{
         Ok(training_sets)
     }
 
-    pub fn write_training_sets(filename: String, training_sets: &Vec<TrainingSet>) -> Result<(), io::Error>{
+    pub fn write_training_sets(filename: &str, training_sets: &Vec<TrainingSet>) -> Result<(), io::Error>{
+        let dir = Path::new("training_sets");
+        if !dir.exists() {
+            std::fs::create_dir(dir)?;
+        }
         for (index, training_set) in training_sets.iter().enumerate() {
             let name = format!("{}{}", filename, index);
-            let path = Path::new(&name);
+            let path = dir.join(Path::new(&name));
             let mut file = File::create(&path)?;
             match training_set.label {
                 "Rectangle" => {
